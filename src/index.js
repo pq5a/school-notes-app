@@ -10,8 +10,6 @@ import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 
 const publicPath = fileURLToPath(new URL("../public/", import.meta.url));
-
-// Wisp Configuration — Optimized for Games & WebSockets
 logging.set_level(logging.NONE);
 Object.assign(wisp.options, {
 	allow_udp_streams: true,
