@@ -28,7 +28,6 @@ const fastify = Fastify({
         handler(req, res);
       })
       .on("upgrade", (req, socket, head) => {
-        // RENAMED: /wisp/ -> /study-sync/
         if (req.url.endsWith("/study-sync/")) {
           wisp.routeRequest(req, socket, head);
         } else {
@@ -43,21 +42,18 @@ fastify.register(fastifyStatic, {
   decorateReply: true,
 });
 
-// RENAMED: /scram/ -> /portal-assets/
 fastify.register(fastifyStatic, {
   root: scramjetPath,
   prefix: "/portal-assets/",
   decorateReply: false,
 });
 
-// RENAMED: /libcurl/ -> /data-core/
 fastify.register(fastifyStatic, {
   root: libcurlPath,
   prefix: "/data-core/",
   decorateReply: false,
 });
 
-// RENAMED: /baremux/ -> /link-engine/
 fastify.register(fastifyStatic, {
   root: baremuxPath,
   prefix: "/link-engine/",
