@@ -1,25 +1,24 @@
-"use strict";
-const stockSW = "./sw.js";
+import { BareMuxConnection } from "/baremux/index.js";
 
-/**
- * List of hostnames that are allowed to run serviceworkers on http://
- */
-const swAllowedHostnames = ["localhost", "127.0.0.1"];
+const connection = new BareMuxConnection("/baremux/worker.js");
 
-/**
- * Global util
- * Used in 404.html and index.html
- */
 async function registerSW() {
-	if (!navigator.serviceWorker) {
-		if (
-			location.protocol !== "https:" &&
-			!swAllowedHostnames.includes(location.hostname)
-		)
-			throw new Error("Service workers cannot be registered without https.");
+    if (!navigator.serviceWorker) {
+        throw new Error("Your browser doesn't support service workers.");
+    }
 
-		throw new Error("Your browser doesn't support service workers.");
-	}
+    await navigator.serviceWorker.register("/sw.js", {
+        scope: "/",
+    });
 
-	await navigator.serviceWorker.register(stockSW);
+    // Swap back to the Epoxy transport for better YouTube compatibility
+    await connection.setTransport("/epoxy/index.mjs", [
+        { websocket: "wss://" + location.host + "/wisp/" }
+    ]);
+
+    await navigator.serviceWorker.ready;
 }
+
+registerSW().catch((err) => {
+    console.error("Failed to register service worker:", err);
+});
