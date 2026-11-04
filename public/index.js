@@ -20,12 +20,12 @@ scramjet.init();
 
 const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
 
-// Force Libcurl transport on load
 (async () => {
 	const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
 	try {
+		// Reverted to Libcurl to avoid the SharedWorker crash
 		await connection.setTransport("/libcurl/index.mjs", [{ websocket: wispUrl }]);
-		console.log("Libcurl transport initialized.");
+		console.log("Transport initialized.");
 	} catch (err) {
 		console.error("Failed to initialize transport:", err);
 		error.textContent = "Proxy transport failed to initialize.";
