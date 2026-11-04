@@ -1,55 +1,85 @@
-"use strict";
+import { createServer } from "node:http";
+import { fileURLToPath } from "url";
+import { hostname } from "node:os";
+import { server as wisp, logging } from "@mercuryworkshop/wisp-js/server";
+import Fastify from "fastify";
+import fastifyStatic from "@fastify/static";
 
-const form = document.getElementById("sj-form");
-const address = document.getElementById("sj-address");
-const searchEngine = document.getElementById("sj-search-engine");
-const error = document.getElementById("sj-error");
-const errorCode = document.getElementById("sj-error-code");
+import { scramjetPath } from "@mercuryworkshop/scramjet/path";
+import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
+import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 
-const { ScramjetController } = $scramjetLoadController();
+const publicPath = fileURLToPath(new URL("../public/", import.meta.url));
 
-const scramjet = new ScramjetController({
-	files: {
-		wasm: "/assets/js/core/scramjet.wasm.wasm",
-		all: "/assets/js/core/scramjet.all.js",
-		sync: "/assets/js/core/scramjet.sync.js",
+logging.set_level(logging.NONE);
+Object.assign(wisp.options, {
+	allow_udp_streams: true,
+	allow_tcp_streams: true,
+	dns_servers: ["1.1.1.3", "1.0.0.3"],
+});
+
+const fastify = Fastify({
+	serverFactory: (handler) => {
+		return createServer()
+			.on("request", (req, res) => {
+				res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+				res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+				res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+				handler(req, res);
+			})
+			.on("upgrade", (req, socket, head) => {
+				if (req.url.endsWith("/wisp/")) wisp.routeRequest(req, socket, head);
+				else socket.end();
+			});
 	},
 });
 
-scramjet.init();
+fastify.register(fastifyStatic, {
+	root: publicPath,
+	decorateReply: true,
+});
 
-// Updated BareMux path
-const connection = new BareMux.BareMuxConnection("/assets/js/network/worker.js");
+fastify.register(fastifyStatic, {
+	root: scramjetPath,
+	prefix: "/scram/",
+	decorateReply: false,
+});
 
-(async () => {
-	// Updated WebSocket path
-	const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/api/stream/";
-	try {
-		// Updated Libcurl path
-		await connection.setTransport("/assets/js/transport/index.mjs", [{ websocket: wispUrl }]);
-		console.log("Transport initialized.");
-	} catch (err) {
-		console.error("Failed to initialize transport:", err);
-		error.textContent = "Proxy transport failed to initialize.";
-		errorCode.textContent = err.toString();
-	}
-})();
+fastify.register(fastifyStatic, {
+	root: libcurlPath,
+	prefix: "/libcurl/",
+	decorateReply: false,
+});
 
-form.addEventListener("submit", async (event) => {
-	event.preventDefault();
+fastify.register(fastifyStatic, {
+	root: baremuxPath,
+	prefix: "/baremux/",
+	decorateReply: false,
+});
 
-	try {
-		await registerSW();
-	} catch (err) {
-		error.textContent = "Failed to register service worker.";
-		errorCode.textContent = err.toString();
-		throw err;
-	}
+fastify.setNotFoundHandler((res, reply) => {
+	return reply.code(404).type("text/html").sendFile("404.html");
+});
 
-	const url = search(address.value, searchEngine.value);
+fastify.server.on("listening", () => {
+	const address = fastify.server.address();
+	console.log("Listening on:");
+	console.log(`\thttp://localhost:${address.port}`);
+});
 
-	const frame = scramjet.createFrame();
-	frame.frame.id = "sj-frame";
-	document.body.appendChild(frame.frame);
-	frame.go(url);
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
+
+function shutdown() {
+	console.log("SIGTERM signal received: closing HTTP server");
+	fastify.close();
+	process.exit(0);
+}
+
+let port = parseInt(process.env.PORT || "");
+if (isNaN(port)) port = 8080;
+
+fastify.listen({
+	port: port,
+	host: "0.0.0.0",
 });
