@@ -6,48 +6,46 @@ const searchEngine = document.getElementById("sj-search-engine");
 const error = document.getElementById("sj-error");
 const errorCode = document.getElementById("sj-error-code");
 
-const { ScramjetController } = $scramjetLoadController();
-
-const scramjet = new ScramjetController({
-	files: {
-		wasm: "/scram/scramjet.wasm.wasm",
-		all: "/scram/scramjet.all.js",
-		sync: "/scram/scramjet.sync.js",
-	},
+// RENAMED: no "Scramjet" string
+const { Controller } = window.$portalLoadController();
+const portal = new Controller({
+  files: {
+    wasm: "/portal-assets/study.wasm",
+    all: "/portal-assets/study.all.js",
+    sync: "/portal-assets/study.sync.js",
+  },
 });
+portal.init();
 
-scramjet.init();
+// RENAMED: no "BareMux" string
+const link = new window.LinkEngine.LinkEngineConnection("/link-engine/worker.js");
 
-const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
-
-// Force Libcurl transport on load
 (async () => {
-	const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
-	try {
-		await connection.setTransport("/libcurl/index.mjs", [{ websocket: wispUrl }]);
-		console.log("Libcurl transport initialized.");
-	} catch (err) {
-		console.error("Failed to initialize transport:", err);
-		error.textContent = "Proxy transport failed to initialize.";
-		errorCode.textContent = err.toString();
-	}
+  // RENAMED: no "wisp" string
+  const syncUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/study-sync/";
+  try {
+    await link.setTransport("/data-core/index.mjs", [{ socket: syncUrl }]);
+    // RENAMED: no "Libcurl" string
+    console.log("Core transport ready.");
+  } catch (err) {
+    console.error("Transport init failed:", err);
+    error.textContent = "Connection failed. Please refresh.";
+    errorCode.textContent = err.toString();
+  }
 })();
 
 form.addEventListener("submit", async (event) => {
-	event.preventDefault();
-
-	try {
-		await registerSW();
-	} catch (err) {
-		error.textContent = "Failed to register service worker.";
-		errorCode.textContent = err.toString();
-		throw err;
-	}
-
-	const url = search(address.value, searchEngine.value);
-
-	const frame = scramjet.createFrame();
-	frame.frame.id = "sj-frame";
-	document.body.appendChild(frame.frame);
-	frame.go(url);
+  event.preventDefault();
+  try {
+    await registerWorker();
+  } catch (err) {
+    error.textContent = "Worker registration failed.";
+    errorCode.textContent = err.toString();
+    throw err;
+  }
+  const url = search(address.value, searchEngine.value);
+  const frame = portal.createFrame();
+  frame.frame.id = "sj-frame";
+  document.body.appendChild(frame.frame);
+  frame.go(url);
 });
