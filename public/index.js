@@ -23,7 +23,8 @@ scramjet.init();
 const connection = new BareMux.BareMuxConnection("/static/s2/worker.js");
 
 (async () => {
-	const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/static/s4/";
+	// CHANGED FROM /wisp/ TO /api/live/
+	const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/api/live/";
 	try {
 		await connection.setTransport("/static/s3/index.mjs", [{ websocket: wispUrl }]);
 		console.log("Transport initialized.");
