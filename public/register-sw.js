@@ -17,4 +17,5 @@ async function registerSW() {
 	await navigator.serviceWorker.ready;
 }
 
+// Expose globally so index.js can call it
 window.registerSW = registerSW;
