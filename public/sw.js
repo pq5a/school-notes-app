@@ -1,7 +1,9 @@
 importScripts("/static/s1/scramjet.all.js");
 
-const { ScramjetServiceWorker } = $scramjetLoadWorker();
-const scramjet = new ScramjetServiceWorker();
+// Obfuscated to bypass DPI string scanning
+const workerLoader = self["$scramjet" + "LoadWorker"];
+const { ScramjetServiceWorker: SW } = workerLoader();
+const scramjet = new SW();
 
 async function handleRequest(event) {
 	await scramjet.loadConfig();
