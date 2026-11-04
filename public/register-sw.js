@@ -1,14 +1,21 @@
 "use strict";
-const stockSW = "./study-worker.js";
+const stockSW = "./sw.js";
 const swAllowedHostnames = ["localhost", "127.0.0.1"];
 
 async function registerSW() {
-  if (!navigator.serviceWorker) {
-    if (location.protocol !== "https:" && !swAllowedHostnames.includes(location.hostname))
-      throw new Error("Service workers cannot be registered without https.");
-    throw new Error("Your browser doesn't support service workers.");
-  }
-  await navigator.serviceWorker.register(stockSW);
-  await navigator.serviceWorker.ready;
+	if (!navigator.serviceWorker) {
+		if (
+			location.protocol !== "https:" &&
+			!swAllowedHostnames.includes(location.hostname)
+		)
+			throw new Error("Service workers cannot be registered without https.");
+
+		throw new Error("Your browser doesn't support service workers.");
+	}
+
+	await navigator.serviceWorker.register(stockSW);
+	await navigator.serviceWorker.ready;
 }
+
+// Expose globally so index.js can call it
 window.registerSW = registerSW;
