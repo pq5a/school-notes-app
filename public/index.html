@@ -35,7 +35,7 @@
 				flex-direction: column;
 				align-items: center;
 				min-height: 100vh;
-				padding-top: 8vh;
+				padding-top: 5vh;
 			}
 
 			.flex-center {
@@ -53,7 +53,8 @@
 			}
 
 			.logo {
-				height: 72px;
+				/* INCREASED LOGO SIZE */
+				height: 140px;
 				width: auto;
 				margin-bottom: 16px;
 				border-radius: 12px;
@@ -188,10 +189,9 @@
 				font-family: monospace;
 			}
 
+			/* FIXED FOOTER */
 			footer {
-				position: fixed;
-				bottom: 0;
-				left: 0;
+				margin-top: auto; /* Pushes it to the bottom of the flex container */
 				width: 100%;
 				padding: 16px 24px;
 				background: #f8f9fa;
@@ -200,7 +200,7 @@
 				justify-content: space-between;
 				font-size: 13px;
 				color: #70757a;
-				z-index: 10;
+				/* Removed position: fixed and z-index */
 			}
 
 			footer a {
@@ -220,14 +220,13 @@
 					flex-direction: column;
 					align-items: center;
 					gap: 10px;
-					position: static;
 					margin-top: 40px;
-					border-top: none;
 				}
 				footer a { margin: 0 10px; }
-				body { padding-top: 5vh; }
+				body { padding-top: 3vh; }
 				.shortcut { width: 80px; padding: 8px; }
 				.shortcut .icon { width: 48px; height: 48px; }
+				.logo { height: 100px; }
 			}
 		</style>
 	</head>
@@ -293,21 +292,18 @@
 		</footer>
 
 		<script>
-			// Handle the developer link
 			document.getElementById('dev-link').addEventListener('click', function(e) {
 				e.preventDefault();
 				var p = 'aHR0cHM6Ly9mcmFpbC5sb2wvcHFzYQ==';
 				window.open(atob(p), '_blank');
 			});
 
-			// Extra Homework Shortcut (play123)
 			document.getElementById('shortcut-hw').addEventListener('click', function() {
 				var targetUrl = atob('aHR0cHM6Ly93d3cucGxheTEyMy5jb20=');
 				document.getElementById('sj-address').value = targetUrl;
 				document.getElementById('sj-form').requestSubmit();
 			});
 
-			// Maths Revision Shortcut (agame)
 			document.getElementById('shortcut-maths').addEventListener('click', function() {
 				var targetUrl = atob('aHR0cHM6Ly93d3cuYWdhbWUuY29t');
 				document.getElementById('sj-address').value = targetUrl;
