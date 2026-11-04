@@ -11,11 +11,11 @@ import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 
 const publicPath = fileURLToPath(new URL("../public/", import.meta.url));
 
-// Wisp Configuration
+// Wisp Configuration — Optimized for Games & WebSockets
 logging.set_level(logging.NONE);
 Object.assign(wisp.options, {
-	// CHANGED TO TRUE FOR GAME SUPPORT
 	allow_udp_streams: true,
+	allow_tcp_streams: true,
 	dns_servers: ["1.1.1.3", "1.0.0.3"],
 });
 
@@ -23,7 +23,7 @@ const fastify = Fastify({
 	serverFactory: (handler) => {
 		return createServer()
 			.on("request", (req, res) => {
-				// WebGL + SharedArrayBuffer headers
+				// Required for WebGL / SharedArrayBuffer
 				res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
 				res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
 				// Allows game iframes to load external assets
@@ -68,7 +68,6 @@ fastify.server.on("listening", () => {
 	const address = fastify.server.address();
 	console.log("Listening on:");
 	console.log(`\thttp://localhost:${address.port}`);
-	console.log(`\thttp://${hostname()}:${address.port}`);
 });
 
 process.on("SIGINT", shutdown);
