@@ -10,9 +10,9 @@ const { ScramjetController } = $scramjetLoadController();
 
 const scramjet = new ScramjetController({
 	files: {
-		wasm: "/scram/scramjet.wasm.wasm",
-		all: "/scram/scramjet.all.js",
-		sync: "/scram/scramjet.sync.js",
+		wasm: "/assets/scramjet.wasm.wasm",
+		all: "/assets/scramjet.all.js",
+		sync: "/assets/scramjet.sync.js",
 	},
 });
 
@@ -20,12 +20,11 @@ scramjet.init();
 
 const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
 
-// Force Libcurl transport on load
 (async () => {
 	const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
 	try {
-		await connection.setTransport("/libcurl/index.mjs", [{ websocket: wispUrl }]);
-		console.log("Libcurl transport initialized.");
+		await connection.setTransport("/epoxy/index.mjs", [{ websocket: wispUrl }]);
+		console.log("Transport initialized.");
 	} catch (err) {
 		console.error("Failed to initialize transport:", err);
 		error.textContent = "Proxy transport failed to initialize.";
