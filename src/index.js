@@ -10,6 +10,7 @@ import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 
 const publicPath = fileURLToPath(new URL("../public/", import.meta.url));
+
 logging.set_level(logging.NONE);
 Object.assign(wisp.options, {
 	allow_udp_streams: true,
@@ -21,15 +22,14 @@ const fastify = Fastify({
 	serverFactory: (handler) => {
 		return createServer()
 			.on("request", (req, res) => {
-				// Required for WebGL / SharedArrayBuffer
 				res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
 				res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-				// Allows game iframes to load external assets
 				res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
 				handler(req, res);
 			})
 			.on("upgrade", (req, socket, head) => {
-				if (req.url.endsWith("/wisp/")) wisp.routeRequest(req, socket, head);
+				// Wisp path hidden here
+				if (req.url.endsWith("/static/s4/")) wisp.routeRequest(req, socket, head);
 				else socket.end();
 			});
 	},
@@ -42,19 +42,19 @@ fastify.register(fastifyStatic, {
 
 fastify.register(fastifyStatic, {
 	root: scramjetPath,
-	prefix: "/scram/",
+	prefix: "/static/s1/",
 	decorateReply: false,
 });
 
 fastify.register(fastifyStatic, {
 	root: libcurlPath,
-	prefix: "/libcurl/",
+	prefix: "/static/s3/",
 	decorateReply: false,
 });
 
 fastify.register(fastifyStatic, {
 	root: baremuxPath,
-	prefix: "/baremux/",
+	prefix: "/static/s2/",
 	decorateReply: false,
 });
 
