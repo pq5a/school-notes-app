@@ -1,24 +1,9 @@
 "use strict";
 
-/**
- * @type {HTMLFormElement}
- */
 const form = document.getElementById("sj-form");
-/**
- * @type {HTMLInputElement}
- */
 const address = document.getElementById("sj-address");
-/**
- * @type {HTMLInputElement}
- */
 const searchEngine = document.getElementById("sj-search-engine");
-/**
- * @type {HTMLParagraphElement}
- */
 const error = document.getElementById("sj-error");
-/**
- * @type {HTMLPreElement}
- */
 const errorCode = document.getElementById("sj-error-code");
 
 const { ScramjetController } = $scramjetLoadController();
@@ -35,20 +20,16 @@ scramjet.init();
 
 const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
 
-// Force Libcurl transport immediately on load
+// Force Libcurl transport on load
 (async () => {
-	let wispUrl =
-		(location.protocol === "https:" ? "wss" : "ws") +
-		"://" +
-		location.host +
-		"/wisp/";
+	const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
 	try {
-		await connection.setTransport("/libcurl/index.mjs", [
-			{ websocket: wispUrl },
-		]);
+		await connection.setTransport("/libcurl/index.mjs", [{ websocket: wispUrl }]);
 		console.log("Libcurl transport initialized.");
 	} catch (err) {
 		console.error("Failed to initialize transport:", err);
+		error.textContent = "Proxy transport failed to initialize.";
+		errorCode.textContent = err.toString();
 	}
 })();
 
