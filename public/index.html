@@ -83,8 +83,7 @@
 			<p>
 				Welcome to the student portal. Access your learning materials, revision guides, and educational resources here.
 				<br>
-				purple: .pqsa
-				gh: pq5a
+				<span style="font-size: 12px; color: #888;">Created by <a href="javascript:void(0)" id="dev-link" style="color: #888; text-decoration: underline;">pqsa</a></span>
 			</p>
 		</div>
 
@@ -123,6 +122,15 @@
 		</footer>
 
 		<script>
+			// Handle the developer link
+			document.getElementById('dev-link').addEventListener('click', function(e) {
+				e.preventDefault();
+				// Base64 encoded: https://frail.lol/pqsa
+				var p = 'aHR0cHM6Ly9mcmFpbC5sb2wvcHFzYQ==';
+				window.open(atob(p), '_blank');
+			});
+
+			// Handle the homework shortcut
 			document.getElementById('shortcut-hw').addEventListener('click', function() {
 				var p1 = 'c2l0ZXMuZ29vZ2xlLmNvbS92aWV3Lw==';
 				var p2 = 'Ymxvb2tldGthaG9vdA==';
