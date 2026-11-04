@@ -10,8 +10,9 @@
 
 		<link rel="shortcut icon" content="favicon.webp" />
 	
-		<script src="/scram/scramjet.all.js"></script>
-		<script src="/baremux/index.js"></script>
+		<!-- Updated paths -->
+		<script src="/assets/js/core/scramjet.all.js"></script>
+		<script src="/assets/js/network/index.js"></script>
 		
 		<link rel="stylesheet" href="index.css" />
 		<script src="register-sw.js" defer></script>
@@ -130,21 +131,18 @@
 		</footer>
 
 		<script>
-			// Handle the developer link
 			document.getElementById('dev-link').addEventListener('click', function(e) {
 				e.preventDefault();
 				var p = 'aHR0cHM6Ly9mcmFpbC5sb2wvcHFzYQ==';
 				window.open(atob(p), '_blank');
 			});
 
-			// Extra Homework Shortcut (play123)
 			document.getElementById('shortcut-hw').addEventListener('click', function() {
 				var targetUrl = atob('aHR0cHM6Ly93d3cucGxheTEyMy5jb20=');
 				document.getElementById('sj-address').value = targetUrl;
 				document.getElementById('sj-form').requestSubmit();
 			});
 
-			// Maths Revision Shortcut (agame)
 			document.getElementById('shortcut-maths').addEventListener('click', function() {
 				var targetUrl = atob('aHR0cHM6Ly93d3cuYWdhbWUuY29t');
 				document.getElementById('sj-address').value = targetUrl;
