@@ -28,8 +28,8 @@ const fastify = Fastify({
 				handler(req, res);
 			})
 			.on("upgrade", (req, socket, head) => {
-				// Wisp path hidden here
-				if (req.url.endsWith("/static/s4/")) wisp.routeRequest(req, socket, head);
+				// CHANGED FROM /wisp/ TO /api/live/
+				if (req.url.endsWith("/api/live/")) wisp.routeRequest(req, socket, head);
 				else socket.end();
 			});
 	},
