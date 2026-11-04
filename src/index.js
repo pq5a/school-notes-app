@@ -11,7 +11,6 @@ import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 
 const publicPath = fileURLToPath(new URL("../public/", import.meta.url));
 
-// Wisp Configuration — Optimized for Games & WebSockets
 logging.set_level(logging.NONE);
 Object.assign(wisp.options, {
 	allow_udp_streams: true,
@@ -23,15 +22,14 @@ const fastify = Fastify({
 	serverFactory: (handler) => {
 		return createServer()
 			.on("request", (req, res) => {
-				// Required for WebGL / SharedArrayBuffer
 				res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
 				res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-				// Allows game iframes to load external assets
 				res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
 				handler(req, res);
 			})
 			.on("upgrade", (req, socket, head) => {
-				if (req.url.endsWith("/wisp/")) wisp.routeRequest(req, socket, head);
+				// Obfuscated WebSocket path
+				if (req.url.endsWith("/api/stream/")) wisp.routeRequest(req, socket, head);
 				else socket.end();
 			});
 	},
@@ -42,21 +40,22 @@ fastify.register(fastifyStatic, {
 	decorateReply: true,
 });
 
+// Obfuscated static paths
 fastify.register(fastifyStatic, {
 	root: scramjetPath,
-	prefix: "/scram/",
+	prefix: "/assets/js/core/",
 	decorateReply: false,
 });
 
 fastify.register(fastifyStatic, {
 	root: libcurlPath,
-	prefix: "/libcurl/",
+	prefix: "/assets/js/transport/",
 	decorateReply: false,
 });
 
 fastify.register(fastifyStatic, {
 	root: baremuxPath,
-	prefix: "/baremux/",
+	prefix: "/assets/js/network/",
 	decorateReply: false,
 });
 
