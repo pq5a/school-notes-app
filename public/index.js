@@ -1,4 +1,5 @@
 "use strict";
+
 /**
  * @type {HTMLFormElement}
  */
@@ -34,6 +35,23 @@ scramjet.init();
 
 const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
 
+// Force Libcurl transport immediately on load
+(async () => {
+	let wispUrl =
+		(location.protocol === "https:" ? "wss" : "ws") +
+		"://" +
+		location.host +
+		"/wisp/";
+	try {
+		await connection.setTransport("/libcurl/index.mjs", [
+			{ websocket: wispUrl },
+		]);
+		console.log("Libcurl transport initialized.");
+	} catch (err) {
+		console.error("Failed to initialize transport:", err);
+	}
+})();
+
 form.addEventListener("submit", async (event) => {
 	event.preventDefault();
 
@@ -47,16 +65,6 @@ form.addEventListener("submit", async (event) => {
 
 	const url = search(address.value, searchEngine.value);
 
-	let wispUrl =
-		(location.protocol === "https:" ? "wss" : "ws") +
-		"://" +
-		location.host +
-		"/wisp/";
-	if ((await connection.getTransport()) !== "/libcurl/index.mjs") {
-		await connection.setTransport("/libcurl/index.mjs", [
-			{ websocket: wispUrl },
-		]);
-	}
 	const frame = scramjet.createFrame();
 	frame.frame.id = "sj-frame";
 	document.body.appendChild(frame.frame);
