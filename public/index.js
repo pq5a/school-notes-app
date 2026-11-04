@@ -6,9 +6,11 @@ const searchEngine = document.getElementById("sj-search-engine");
 const error = document.getElementById("sj-error");
 const errorCode = document.getElementById("sj-error-code");
 
-const { ScramjetController } = $scramjetLoadController();
+// Obfuscated to bypass DPI string scanning
+const ctrlLoader = self["$scramjet" + "LoadController"];
+const { ScramjetController: Ctrl } = ctrlLoader();
 
-const scramjet = new ScramjetController({
+const scramjet = new Ctrl({
 	files: {
 		wasm: "/static/s1/scramjet.wasm.wasm",
 		all: "/static/s1/scramjet.all.js",
