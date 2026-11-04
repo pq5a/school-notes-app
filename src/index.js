@@ -28,8 +28,7 @@ const fastify = Fastify({
 				handler(req, res);
 			})
 			.on("upgrade", (req, socket, head) => {
-				// Obfuscated WebSocket path
-				if (req.url.endsWith("/api/stream/")) wisp.routeRequest(req, socket, head);
+				if (req.url.endsWith("/wisp/")) wisp.routeRequest(req, socket, head);
 				else socket.end();
 			});
 	},
@@ -40,22 +39,21 @@ fastify.register(fastifyStatic, {
 	decorateReply: true,
 });
 
-// Obfuscated static paths
 fastify.register(fastifyStatic, {
 	root: scramjetPath,
-	prefix: "/assets/js/core/",
+	prefix: "/scram/",
 	decorateReply: false,
 });
 
 fastify.register(fastifyStatic, {
 	root: libcurlPath,
-	prefix: "/assets/js/transport/",
+	prefix: "/libcurl/",
 	decorateReply: false,
 });
 
 fastify.register(fastifyStatic, {
 	root: baremuxPath,
-	prefix: "/assets/js/network/",
+	prefix: "/baremux/",
 	decorateReply: false,
 });
 
