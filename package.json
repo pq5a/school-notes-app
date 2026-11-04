@@ -1,7 +1,7 @@
 {
-	"name": "student-portal",
-	"version": "1.0.0",
-	"description": "A lightweight dashboard for educational resources and study materials.",
+	"name": "scramjet-demo",
+	"version": "2.0.0",
+	"description": "The demo application for Scramjet, a high-performance web proxy.",
 	"type": "module",
 	"engines": {
 		"npm": ">=7.0.0",
@@ -14,12 +14,10 @@
 		"lint:fix": "eslint ./src/ --fix"
 	},
 	"keywords": [
-		"education",
-		"school",
-		"portal"
+		"proxy"
 	],
-	"author": "pqsa",
-	"license": "MIT",
+	"author": "Mercury Workshop",
+	"license": "GNU AFFERO",
 	"dependencies": {
 		"fastify": "^5.7.4",
 		"@fastify/static": "^9.0.0",
@@ -27,8 +25,7 @@
 		"@mercuryworkshop/libcurl-transport": "^1.5.2",
 		"@mercuryworkshop/scramjet": "https://github.com/MercuryWorkshop/scramjet/releases/download/v1.1.0/mercuryworkshop-scramjet-1.1.0.tgz",
 		"@mercuryworkshop/wisp-js": "^0.4.1",
-		"ws": "^8.18.3",
-		"@mercuryworkshop/epoxy-transport": "^2.1.28"
+		"ws": "^8.18.3"
 	},
 	"devDependencies": {
 		"eslint": "^9.13.0",
