@@ -11,6 +11,7 @@ import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 
 const publicPath = fileURLToPath(new URL("../public/", import.meta.url));
 
+// Wisp Configuration — Optimized for Games & WebSockets
 logging.set_level(logging.NONE);
 Object.assign(wisp.options, {
 	allow_udp_streams: true,
@@ -22,8 +23,10 @@ const fastify = Fastify({
 	serverFactory: (handler) => {
 		return createServer()
 			.on("request", (req, res) => {
+				// Required for WebGL / SharedArrayBuffer
 				res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
 				res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+				// Allows game iframes to load external assets
 				res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
 				handler(req, res);
 			})
