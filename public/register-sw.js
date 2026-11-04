@@ -1,6 +1,5 @@
 "use strict";
 const stockSW = "./sw.js";
-
 const swAllowedHostnames = ["localhost", "127.0.0.1"];
 
 async function registerSW() {
@@ -15,19 +14,7 @@ async function registerSW() {
 	}
 
 	await navigator.serviceWorker.register(stockSW);
-
-	// Wait for the SW to be ready
 	await navigator.serviceWorker.ready;
-
-	// Wire up BareMux using the Libcurl transport
-	if (typeof BareMux !== "undefined") {
-		const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
-		
-		// Use Libcurl for heavy game assets and WebGL
-		await connection.setTransport("/libcurl/index.mjs", [
-			{ wisp: "wss://" + location.host + "/wisp/" }
-		]);
-	}
 }
 
 // Expose globally so index.js can call it
