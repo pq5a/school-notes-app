@@ -1,7 +1,5 @@
-// src/index.js
 import { createServer } from "node:http";
 import { fileURLToPath } from "url";
-import { hostname } from "node:os";
 import { server as wisp, logging } from "@mercuryworkshop/wisp-js/server";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
