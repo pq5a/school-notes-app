@@ -12,14 +12,6 @@ const fastify = Fastify({
 	serverFactory: (handler) => {
 		return createServer()
 			.on("request", (req, res) => {
-				const h1 = "Cross-" + "Origin-" + "Opener-" + "Policy";
-				const h2 = "Cross-" + "Origin-" + "Embedder-" + "Policy";
-				const h3 = "Cross-" + "Origin-" + "Resource-" + "Policy";
-				
-				res.setHeader(h1, "same-" + "origin");
-				res.setHeader(h2, "require-" + "corp");
-				res.setHeader(h3, "cross-" + "origin");
-				
 				if (req.url.startsWith("/bare/")) {
 					bare.routeRequest(req, res);
 				} else {
@@ -38,7 +30,6 @@ fastify.register(fastifyStatic, {
 	decorateReply: true,
 });
 
-// Serve bare-mux from the newly copied public/bare-mux directory
 fastify.register(fastifyStatic, {
 	root: path.join(publicPath, "bare-mux"),
 	prefix: "/bare-mux/",
