@@ -38,7 +38,7 @@ fastify.register(fastifyStatic, {
 	decorateReply: true,
 });
 
-// Serve bare-mux files so the worker can initialize properly
+// Serve the bare-mux worker files exactly where UV expects them
 fastify.register(fastifyStatic, {
 	root: path.join(publicPath, "uv", "bare-mux"),
 	prefix: "/bare-mux/",
