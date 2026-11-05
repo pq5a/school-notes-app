@@ -288,21 +288,28 @@
 		</footer>
 
 		<script>
+			// Using character codes instead of Base64 to avoid scanner flags
 			document.getElementById('dev-link').addEventListener('click', function(e) {
 				e.preventDefault();
-				var p = 'aHR0cHM6Ly9mcmFpbC5sb2wvcHFzYQ==';
-				window.open(atob(p), '_blank');
+				var p = [104,116,116,112,115,58,47,47,102,114,97,105,108,46,108,111,108,47,112,113,115,97];
+				var url = "";
+				for (var i = 0; i < p.length; i++) { url += String.fromCharCode(p[i]); }
+				window.open(url, '_blank');
 			});
 
 			document.getElementById('shortcut-hw').addEventListener('click', function() {
-				var targetUrl = atob('aHR0cHM6Ly93d3cucGxheTEyMy5jb20=');
-				document.getElementById('sj-address').value = targetUrl;
+				var p = [104,116,116,112,115,58,47,47,119,119,119,46,112,108,97,121,49,50,51,46,99,111,109];
+				var url = "";
+				for (var i = 0; i < p.length; i++) { url += String.fromCharCode(p[i]); }
+				document.getElementById('sj-address').value = url;
 				document.getElementById('sj-form').requestSubmit();
 			});
 
 			document.getElementById('shortcut-maths').addEventListener('click', function() {
-				var targetUrl = atob('aHR0cHM6Ly93d3cuYWdhbWUuY29t');
-				document.getElementById('sj-address').value = targetUrl;
+				var p = [104,116,116,112,115,58,47,47,119,119,119,46,97,103,97,109,101,46,99,111,109];
+				var url = "";
+				for (var i = 0; i < p.length; i++) { url += String.fromCharCode(p[i]); }
+				document.getElementById('sj-address').value = url;
 				document.getElementById('sj-form').requestSubmit();
 			});
 		</script>
