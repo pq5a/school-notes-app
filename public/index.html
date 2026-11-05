@@ -7,7 +7,8 @@
 
 		<link rel="shortcut icon" content="favicon.webp" />
 	
-		<!-- UV Scripts -->
+		<!-- Load bare-mux FIRST, then UV -->
+		<script src="/bare-mux/index.js"></script>
 		<script src="/uv/uv.bundle.js"></script>
 		<script src="/uv-config.js"></script>
 		
@@ -299,7 +300,7 @@
 					return;
 				}
 
-				// FIXED: Using /service/ to match the new uv-config
+				// Use /service/ prefix
 				var url = "/service/" + Ultraviolet.codec.xor.encode(address);
 				
 				var oldFrame = document.getElementById("sj-frame");
