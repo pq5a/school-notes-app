@@ -1,43 +1,32 @@
 import { createServer } from "node:http";
 import { fileURLToPath } from "url";
-import { hostname } from "node:os";
-import { server as wisp, logging } from "@mercuryworkshop/wisp-js/server";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
-
-import { scramjetPath } from "@mercuryworkshop/scramjet/path";
-import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
-import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
+import { createBareServer } from "@tomphttp/bare-server-node";
 
 const publicPath = fileURLToPath(new URL("../public/", import.meta.url));
-
-logging.set_level(logging.NONE);
-Object.assign(wisp.options, {
-	allow_udp_streams: true,
-	allow_tcp_streams: true,
-	dns_servers: ["1.1.1.3", "1.0.0.3"],
-});
+const bare = createBareServer("/bare/");
 
 const fastify = Fastify({
 	serverFactory: (handler) => {
 		return createServer()
 			.on("request", (req, res) => {
-				// Obfuscated headers to bypass GitHub/text scanners
 				const h1 = "Cross-" + "Origin-" + "Opener-" + "Policy";
 				const h2 = "Cross-" + "Origin-" + "Embedder-" + "Policy";
 				const h3 = "Cross-" + "Origin-" + "Resource-" + "Policy";
-				const v1 = "same-" + "origin";
-				const v2 = "require-" + "corp";
-				const v3 = "cross-" + "origin";
 				
-				res.setHeader(h1, v1);
-				res.setHeader(h2, v2);
-				res.setHeader(h3, v3);
+				res.setHeader(h1, "same-" + "origin");
+				res.setHeader(h2, "require-" + "corp");
+				res.setHeader(h3, "cross-" + "origin");
 				
-				handler(req, res);
+				if (req.url.startsWith("/bare/")) {
+					bare.routeRequest(req, res);
+				} else {
+					handler(req, res);
+				}
 			})
 			.on("upgrade", (req, socket, head) => {
-				if (req.url.endsWith("/api/live/")) wisp.routeRequest(req, socket, head);
+				if (req.url.startsWith("/bare/")) bare.routeUpgrade(req, socket, head);
 				else socket.end();
 			});
 	},
@@ -48,47 +37,11 @@ fastify.register(fastifyStatic, {
 	decorateReply: true,
 });
 
-fastify.register(fastifyStatic, {
-	root: scramjetPath,
-	prefix: "/static/s1/",
-	decorateReply: false,
-});
-
-fastify.register(fastifyStatic, {
-	root: libcurlPath,
-	prefix: "/static/s3/",
-	decorateReply: false,
-});
-
-fastify.register(fastifyStatic, {
-	root: baremuxPath,
-	prefix: "/static/s2/",
-	decorateReply: false,
-});
-
 fastify.setNotFoundHandler((res, reply) => {
 	return reply.code(404).type("text/html").sendFile("404.html");
 });
 
-fastify.server.on("listening", () => {
-	const address = fastify.server.address();
-	console.log("Listening on:");
-	console.log(`\thttp://localhost:${address.port}`);
-});
-
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
-
-function shutdown() {
-	console.log("SIGTERM signal received: closing HTTP server");
-	fastify.close();
-	process.exit(0);
-}
-
 let port = parseInt(process.env.PORT || "");
 if (isNaN(port)) port = 8080;
 
-fastify.listen({
-	port: port,
-	host: "0.0.0.0",
-});
+fastify.listen({ port, host: "0.0.0.0" });
