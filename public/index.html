@@ -299,8 +299,8 @@
 					return;
 				}
 
-				// Use hidden prefix and XOR encoding from uv-config
-				var url = "/api/fetch/" + Ultraviolet.codec.xor.encode(address);
+				// FIXED: Using /service/ to match the new uv-config
+				var url = "/service/" + Ultraviolet.codec.xor.encode(address);
 				
 				var oldFrame = document.getElementById("sj-frame");
 				if (oldFrame) {
@@ -310,8 +310,6 @@
 				var frame = document.createElement("iframe");
 				frame.id = "sj-frame";
 				frame.style.cssText = "position:fixed; top:0; left:0; width:100vw; height:100vh; border:none; z-index:9999; background:white;";
-				// Add these attributes to prevent COEP blocking
-				frame.setAttribute("allow", "cross-origin-isolated; fullscreen");
 				frame.src = url;
 				document.body.appendChild(frame);
 			});
