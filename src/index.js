@@ -1,5 +1,6 @@
 import { createServer } from "node:http";
 import { fileURLToPath } from "url";
+import path from "node:path";
 import Fastify from "fastify";
 import fastifyStatic from "@fastify/static";
 import { createBareServer } from "@tomphttp/bare-server-node";
@@ -35,6 +36,13 @@ const fastify = Fastify({
 fastify.register(fastifyStatic, {
 	root: publicPath,
 	decorateReply: true,
+});
+
+// Serve bare-mux files so the worker can initialize properly
+fastify.register(fastifyStatic, {
+	root: path.join(publicPath, "uv", "bare-mux"),
+	prefix: "/bare-mux/",
+	decorateReply: false,
 });
 
 fastify.setNotFoundHandler((res, reply) => {
