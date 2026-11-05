@@ -1,18 +1,8 @@
-importScripts("/static/s1/scramjet.all.js");
+importScripts("/uv/uv.bundle.js");
+importScripts("/uv-config.js");
+importScripts("/uv/uv.sw.js");
 
-// Obfuscated to bypass DPI string scanning
-const workerLoader = self["$scramjet" + "LoadWorker"];
-const { ScramjetServiceWorker: SW } = workerLoader();
-const scramjet = new SW();
-
-async function handleRequest(event) {
-	await scramjet.loadConfig();
-	if (scramjet.route(event)) {
-		return scramjet.fetch(event);
-	}
-	return fetch(event.request);
-}
-
+const sw = new UVServiceWorker();
 self.addEventListener("fetch", (event) => {
-	event.respondWith(handleRequest(event));
+    event.respondWith(sw.fetch(event));
 });
