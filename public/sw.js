@@ -7,17 +7,19 @@ const sw = new UVServiceWorker();
 self.addEventListener("fetch", (event) => {
     const url = new URL(event.request.url);
     
-    // DO NOT intercept core files, only proxy the actual searches
+    // CRITICAL: Do not intercept engine files or the Bare server
     if (
-        url.pathname.startsWith("/bare/") || 
-        url.pathname.startsWith("/bare-mux/") || 
+        url.pathname.startsWith("/bare/") ||
+        url.pathname.startsWith("/bare-mux/") ||
         url.pathname.startsWith("/uv/") ||
         url.pathname === "/sw.js" ||
-        url.pathname === "/uv-config.js"
+        url.pathname === "/uv-config.js" ||
+        url.pathname === "/index.html" ||
+        url.pathname === "/"
     ) {
-        return; // Let the browser fetch these directly
+        return; // Let the browser fetch these normally
     }
     
-    // Intercept search requests
+    // Intercept everything else (the actual searches)
     event.respondWith(sw.fetch(event));
 });
