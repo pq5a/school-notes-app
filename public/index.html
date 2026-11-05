@@ -2,10 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
-		/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
 		<title>Interactive Science Lab</title>
 
 		<link rel="shortcut icon" content="favicon.webp" />
@@ -297,18 +294,26 @@
 					address = "https://" + address;
 				}
 				
+				if (typeof Ultraviolet === "undefined") {
+					alert("Error: UV failed to load. Please refresh.");
+					return;
+				}
+
 				// Use hidden prefix and XOR encoding from uv-config
 				var url = "/api/fetch/" + Ultraviolet.codec.xor.encode(address);
 				
-				var frame = document.getElementById("sj-frame");
-				if (!frame) {
-					frame = document.createElement("iframe");
-					frame.id = "sj-frame";
-					frame.style.cssText = "position:fixed; top:0; left:0; width:100vw; height:100vh; border:none; z-index:9999; background:white;";
-					document.body.appendChild(frame);
+				var oldFrame = document.getElementById("sj-frame");
+				if (oldFrame) {
+					oldFrame.remove();
 				}
-				
+
+				var frame = document.createElement("iframe");
+				frame.id = "sj-frame";
+				frame.style.cssText = "position:fixed; top:0; left:0; width:100vw; height:100vh; border:none; z-index:9999; background:white;";
+				// Add these attributes to prevent COEP blocking
+				frame.setAttribute("allow", "cross-origin-isolated; fullscreen");
 				frame.src = url;
+				document.body.appendChild(frame);
 			});
 
 			// ASCII Character Codes for Shortcuts
