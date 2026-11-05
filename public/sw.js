@@ -7,7 +7,7 @@ const sw = new UVServiceWorker();
 self.addEventListener("fetch", (event) => {
     const url = new URL(event.request.url);
     
-    // CRITICAL: Do not intercept engine files or the Bare server
+    // Bypass Service Worker for core files
     if (
         url.pathname.startsWith("/bare/") ||
         url.pathname.startsWith("/bare-mux/") ||
@@ -17,9 +17,8 @@ self.addEventListener("fetch", (event) => {
         url.pathname === "/index.html" ||
         url.pathname === "/"
     ) {
-        return; // Let the browser fetch these normally
+        return;
     }
     
-    // Intercept everything else (the actual searches)
     event.respondWith(sw.fetch(event));
 });
