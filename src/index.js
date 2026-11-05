@@ -38,9 +38,9 @@ fastify.register(fastifyStatic, {
 	decorateReply: true,
 });
 
-// Serve the bare-mux worker files exactly where UV expects them
+// Serve bare-mux from the newly copied public/bare-mux directory
 fastify.register(fastifyStatic, {
-	root: path.join(publicPath, "uv", "bare-mux"),
+	root: path.join(publicPath, "bare-mux"),
 	prefix: "/bare-mux/",
 	decorateReply: false,
 });
